@@ -30,8 +30,8 @@ public class Tenant extends BaseEntity {
   private String name;
 
   @Type(JsonType.class)
-  @Column(name = "additional_meta", nullable = false, columnDefinition = "json")
-  private Map<String, Object> meta = new HashMap<>();
+  @Column(name = "config", nullable = false, columnDefinition = "json")
+  private Map<String, Object> config = new HashMap<>();
 
   @Column(name = "deleted", nullable = false)
   private boolean deleted;
