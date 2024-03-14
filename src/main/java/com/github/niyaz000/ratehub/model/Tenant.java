@@ -16,6 +16,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.opentelemetry.javaagent.shaded.io.opentelemetry.api.internal.ConfigUtil.defaultIfNull;
+
 @Entity
 @Table(name = "tenants")
 @NoArgsConstructor
@@ -26,6 +28,8 @@ import java.util.Map;
 @Builder
 public class Tenant extends BaseEntity {
 
+  public static final String JWT_CONFIG_KEY = "jwt_config";
+
   @Column(name = "name", nullable = false, updatable = false)
   private String name;
 
@@ -35,5 +39,19 @@ public class Tenant extends BaseEntity {
 
   @Column(name = "deleted", nullable = false)
   private boolean deleted;
+
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class JwtConfig {
+    private String keyOne;
+
+    private String TwoOne;
+  }
+
+  public Map<String, String> getSigningKeyConfig() {
+    var value = (Map<String, String>) defaultIfNull(config.get(JWT_CONFIG_KEY), new HashMap<>());
+    return value;
+  }
 
 }

@@ -1,5 +1,6 @@
 package com.github.niyaz000.ratehub.util;
 
+import com.github.niyaz000.ratehub.exception.AuthenticationFailureException;
 import com.github.niyaz000.ratehub.exception.ConcurrentUpdateException;
 import com.github.niyaz000.ratehub.exception.DuplicateEntityException;
 import com.github.niyaz000.ratehub.exception.TenantNotFoundException;
@@ -32,6 +33,10 @@ public final class ExceptionUtil {
 
   public static TenantNotFoundException tenantNotFoundException(String name) {
     return new TenantNotFoundException(NAME, name);
+  }
+
+  public static AuthenticationFailureException authenticationFailureException() {
+    return new AuthenticationFailureException();
   }
 
 }
