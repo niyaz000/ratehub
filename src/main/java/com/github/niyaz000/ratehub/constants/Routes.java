@@ -10,4 +10,6 @@ public final class Routes {
 
   public static final String SINGLE_TENANT_ENDPOINT = BASE_PATH + "tenants/{name}";
 
+  public static final String SINGLE_RATINGS_ENDPOINT = BASE_PATH + "ratings/{id}";
+
 }

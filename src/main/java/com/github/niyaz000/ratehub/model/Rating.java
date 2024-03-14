@@ -1,5 +1,6 @@
 package com.github.niyaz000.ratehub.model;
 
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,7 +9,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Type;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.util.Map;
 
 @Entity
 @Table(name = "ratings")
@@ -36,22 +40,26 @@ public class Rating extends BaseEntity {
   @NotNull
   private Integer tenantId;
 
-  @Column(name = "meta", columnDefinition = "JSONB default '{}'::jsonb")
-  private String meta;
+  @Type(JsonType.class)
+  @Column(name = "meta", columnDefinition = "json")
+  private Map<String, Object> meta;
 
   @Column(name = "score", columnDefinition = "FLOAT default 0")
   private Double score;
 
   @Column(name = "verified", columnDefinition = "BOOLEAN default false")
-  private Boolean verified;
+  private boolean verified;
 
   @Column(name = "weight", columnDefinition = "FLOAT default 0")
   private Double weight;
+
+  @Column(name = "region")
+  private String region;
 
   @Column(name = "variation", columnDefinition = "INTEGER default 0")
   private String variation;
 
   @Column(name = "flushed", columnDefinition = "BOOLEAN default false")
-  private Boolean flushed;
+  private boolean flushed;
 
 }
