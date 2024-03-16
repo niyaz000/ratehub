@@ -1,6 +1,9 @@
 package com.github.niyaz000.ratehub.auth;
 
+import com.github.niyaz000.ratehub.constants.Role;
 import com.github.niyaz000.ratehub.dto.JwtToken;
+
+import java.util.Objects;
 
 public final class AuthContext {
 
@@ -15,16 +18,24 @@ public final class AuthContext {
     }
   }
 
-  public String getRole() {
-    return context.get().getRole();
+  private static JwtToken getContext() {
+    var ctxt = context.get();
+    return ctxt;
   }
 
-  public String getUserId() {
-    return context.get().getUserId();
+  public static Role getRole() {
+    return getContext().getRole();
   }
 
-  public String getTenantName() {
-    return context.get().getTenantName();
+  public static String getUserId() {
+    return getContext().getUserId();
   }
 
+  public static String getTenantName() {
+    return getContext().getTenantName();
+  }
+
+  public static boolean isSystemUser() {
+    return Objects.equals(getContext().getRole(), Role.SYSTEM);
+  }
 }

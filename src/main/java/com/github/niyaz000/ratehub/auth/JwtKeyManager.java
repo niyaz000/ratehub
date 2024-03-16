@@ -1,15 +1,18 @@
 package com.github.niyaz000.ratehub.auth;
 
 import com.github.niyaz000.ratehub.dao.TenantDao;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.*;
 
 @Component
+@Slf4j
 public class JwtKeyManager {
 
   public static final int PER_PAGE = 100;
@@ -35,9 +38,17 @@ public class JwtKeyManager {
     jwtKeyMap = Collections.unmodifiableMap(keys);
   }
 
-  public Optional<String> getSigningKey(String tenantName,
-                                        String keyId) {
-    return Optional.ofNullable(jwtKeyMap.get(getKey(tenantName, keyId)));
+  @SneakyThrows
+  public Optional<PublicKey> getPublicKeyForKeyId(String tenantName,
+                                                  String keyId) {
+      var key = jwtKeyMap.get(getKey(tenantName, keyId));
+      if (key == null) {
+        log.warn("could not find public key for tenantName {} keyId {}", tenantName, keyId);
+        return Optional.empty();
+      }
+      byte[] keyBytes = Base64.getDecoder().decode(key);
+      var publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(keyBytes));
+      return Optional.ofNullable(publicKey);
   }
 
   private String getKey(String tenantName,

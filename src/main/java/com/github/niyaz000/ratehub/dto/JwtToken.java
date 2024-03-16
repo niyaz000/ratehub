@@ -1,22 +1,24 @@
 package com.github.niyaz000.ratehub.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.github.niyaz000.ratehub.constants.Role;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Data
 @NoArgsConstructor
-@Builder
-@AllArgsConstructor
 public class JwtToken {
 
-  @NotBlank
+  public JwtToken(String tenantName, String role, String userId) {
+    this.tenantName = Objects.requireNonNull(tenantName, "tenant_name must not be null");
+    this.role = Role.valueOf(Objects.requireNonNull(role, "role must not be null").toUpperCase());
+    this.userId = userId;
+  }
+
   private String tenantName;
 
-  @NotBlank
-  private String role;
+  private Role role;
 
   private String userId;
 

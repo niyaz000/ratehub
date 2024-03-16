@@ -1,5 +1,6 @@
 package com.github.niyaz000.ratehub.controller;
 
+import com.github.niyaz000.ratehub.auth.AuthContext;
 import com.github.niyaz000.ratehub.constants.AppConstants;
 import com.github.niyaz000.ratehub.response.RatingGetResponse;
 import com.github.niyaz000.ratehub.service.RatingService;
@@ -22,7 +23,7 @@ public class RatingController {
 
   @GetMapping(SINGLE_RATINGS_ENDPOINT)
   public RatingGetResponse findById(@PathVariable(AppConstants.ID) Long id) {
-    return null;
+    return ratingService.findById(AuthContext.getTenantName(), id);
   }
 
 

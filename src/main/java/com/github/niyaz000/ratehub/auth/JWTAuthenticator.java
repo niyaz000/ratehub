@@ -10,15 +10,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Component;
 
+import java.security.PublicKey;
 import java.util.Optional;
 
 import static io.opentelemetry.javaagent.shaded.io.opentelemetry.api.internal.ConfigUtil.defaultIfNull;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class JWTAuthenticator {
+
+  private static final Long CLOCK_SKEW_SECONDS = 10L;
 
   private final JwtKeyManager jwtKeyManager;
 
@@ -34,22 +36,23 @@ public class JWTAuthenticator {
     return Optional.ofNullable(headerValue);
   }
 
-  private Optional<String> getSigningKeyId(String jwtToken) {
+  private Optional<PublicKey> getPublicKeyForKeyId(String jwtToken) {
     var tokenWithoutSign = jwtToken.substring(0, jwtToken.lastIndexOf('.') + 1);
     var claims = Jwts
       .parser()
       .parseClaimsJwt(tokenWithoutSign);
 
-    var kid = (String) claims.getHeader().get(KID);
+    var kid = claims.getHeader().get(KID).toString();
     var tenantName = defaultIfNull(claims.getBody().getIssuer(), Strings.EMPTY);
-    return jwtKeyManager.getSigningKey(tenantName, kid);
+    return jwtKeyManager.getPublicKeyForKeyId(tenantName, kid);
   }
 
   public JwtToken decode(String jwtToken) {
-    var key = getSigningKeyId(jwtToken).orElseThrow(ExceptionUtil::authenticationFailureException);
+    var key = getPublicKeyForKeyId(jwtToken).orElseThrow(ExceptionUtil::authenticationFailureException);
     var body = Jwts
             .parser()
-            .setSigningKey(key.getBytes(UTF_8))
+            .setAllowedClockSkewSeconds(CLOCK_SKEW_SECONDS)
+            .setSigningKey(key)
             .parseClaimsJws(jwtToken)
             .getBody();
     return new JwtToken(body.getIssuer(), body.get(JwtConstants.ROLE, String.class), body.get(JwtConstants.USER_ID, String.class));

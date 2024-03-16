@@ -4,7 +4,17 @@ public final class ApiErrorConstants {
 
   public static final String ERROR_CODE = "validation_failed";
 
+  public static final String UNAUTHORIZED = "unauthorized";
+
+  public static final String FORBIDDEN = "forbidden";
+
+  public static final String FORBIDDEN_MESSAGE = "You do not have necessary permission to access the resource.";
+
+  public static final String UNAUTHORIZED_MESSAGE = "Please provide a valid token to access the server.";
+
   public static final String ERROR_MESSAGE = "Request processing failed due to invalid data.";
+
+  public static final String TENANT_NOT_FOUND_ERROR_MESSAGE = "Could not locate tenant with the given name";
 
   public static final String DUPLICATE_ENTITY = "duplicate_entity";
 

@@ -12,4 +12,6 @@ public final class Routes {
 
   public static final String SINGLE_RATINGS_ENDPOINT = BASE_PATH + "ratings/{id}";
 
+  public static final String ACTUATOR_ENDPOINT = "actuator";
+
 }
