@@ -8,4 +8,10 @@ public final class AppConstants {
 
   public static final String ID = "id";
 
+  public static final String SYSTEM_ALONE = "hasAnyRole('SYSTEM')";
+
+  public static final String SYSTEM_AND_ADMIN = "hasAnyRole('SYSTEM', 'ADMIN')";
+
+  public static final String ALL_ROLES = "hasAnyRole('SYSTEM', 'ADMIN', 'USER')";
+
 }

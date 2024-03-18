@@ -1,9 +1,6 @@
 package com.github.niyaz000.ratehub.util;
 
-import com.github.niyaz000.ratehub.exception.AuthenticationFailureException;
-import com.github.niyaz000.ratehub.exception.ConcurrentUpdateException;
-import com.github.niyaz000.ratehub.exception.DuplicateEntityException;
-import com.github.niyaz000.ratehub.exception.TenantNotFoundException;
+import com.github.niyaz000.ratehub.exception.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
@@ -37,6 +34,10 @@ public final class ExceptionUtil {
 
   public static AuthenticationFailureException authenticationFailureException() {
     return new AuthenticationFailureException();
+  }
+
+  public static UnauthorizedException unauthorizedException() {
+    return new UnauthorizedException();
   }
 
 }

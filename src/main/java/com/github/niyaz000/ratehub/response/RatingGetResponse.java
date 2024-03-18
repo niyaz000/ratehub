@@ -26,9 +26,11 @@ public class RatingGetResponse {
 
   private String productId;
 
+  private Double weight;
+
   private String region;
 
-  private Map<String, String> meta = new HashMap<>();
+  private Map<String, Object> meta = new HashMap<>();
 
   @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", timezone="UTC")
   private Date createdAt;
