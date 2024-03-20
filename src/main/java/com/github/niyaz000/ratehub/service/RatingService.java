@@ -1,15 +1,21 @@
 package com.github.niyaz000.ratehub.service;
 
 import com.github.niyaz000.ratehub.dao.RatingDao;
+import com.github.niyaz000.ratehub.dao.RatingSummaryDao;
 import com.github.niyaz000.ratehub.exception.NotFoundException;
 import com.github.niyaz000.ratehub.mapper.RatingMapper;
+import com.github.niyaz000.ratehub.model.RatingSummary;
 import com.github.niyaz000.ratehub.model.Tenant;
+import com.github.niyaz000.ratehub.request.RatingCreateRequest;
+import com.github.niyaz000.ratehub.response.ProductRatingSummaryResponse;
+import com.github.niyaz000.ratehub.response.RatingCreateResponse;
 import com.github.niyaz000.ratehub.response.RatingGetResponse;
-import com.github.niyaz000.ratehub.response.UserRatingsResponse;
+import com.github.niyaz000.ratehub.response.RatingsGetResponse;
 import com.github.niyaz000.ratehub.util.ExceptionUtil;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -26,6 +32,8 @@ public class RatingService {
   private final RatingDao ratingDao;
 
   private final RatingMapper ratingMapper;
+
+  private final RatingSummaryDao ratingSummaryDao;
 
   public RatingGetResponse findById(Tenant tenant,
                                     String userId,
@@ -46,17 +54,46 @@ public class RatingService {
     }
   }
 
-  public UserRatingsResponse findAllRatingForUser(Tenant tenant,
-                                                  String userId,
-                                                  int page,
-                                                  int perPage,
-                                                  Sort.@NotNull Direction direction) {
+  public RatingsGetResponse findAllRatingForUser(Tenant tenant,
+                                                 String userId,
+                                                 int page,
+                                                 int perPage,
+                                                 Sort.@NotNull Direction direction) {
     var ratings = ratingDao.findAllByTenantIdAndUserId(tenant.getId(), userId, PageRequest.of(page - 1, perPage, direction));
-    return ratingMapper.mapGetUserRatingsToResponse(ratings, tenant.getName());
+    return ratingMapper.mapGetRatingsRequestToResponse(ratings, tenant.getName());
   }
 
   public void deleteRatingById(Tenant tenant, Long id) {
     ratingDao.deleteByTenantIdAndId(tenant.getId(), id);
+  }
+
+  public RatingsGetResponse findAllRatingForProduct(Tenant tenant, String productId, int perPage, long lastRecordId) {
+    var ratings = ratingDao.findAllRatingForProduct(tenant.getId(), productId, lastRecordId, PageRequest.of(0, perPage, Sort.Direction.DESC));
+    return ratingMapper.mapGetRatingsRequestToResponse(ratings, tenant.getName());
+  }
+
+  public ProductRatingSummaryResponse getRatingSummary(Tenant tenant, String productId) {
+    var summary = ratingSummaryDao.findByTenantIdAndProductId(tenant.getId(), productId)
+      .orElseThrow();
+    return ratingMapper.mapGetProductRatingSummaryRequestToResponse(summary, tenant.getName());
+  }
+
+  public RatingGetResponse addOrUpdateRating(Tenant tenant,
+                                             RatingCreateRequest request,
+                                             String productId,
+                                             String userId) {
+    ratingSummaryDao.findByTenantIdAndProductId(tenant.getId(), productId)
+      .orElseGet(() -> {
+        try {
+          return ratingSummaryDao.save(RatingSummary.defaultRatingSummary(tenant.getId(), productId));
+        } catch (DataIntegrityViolationException ex) {
+          return ratingSummaryDao.findByTenantIdAndProductId(tenant.getId(), productId).get();
+        }
+      });
+
+    var rating = ratingMapper.mapRatingCreateRequestToRating(request, tenant.getId(), productId, userId);
+    rating = ratingDao.save(rating);
+    return ratingMapper.mapRatingGetRequestToResponse(rating, tenant.getName());
   }
 
 }

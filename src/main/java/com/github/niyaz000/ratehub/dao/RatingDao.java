@@ -35,4 +35,8 @@ public class RatingDao {
     repository.deleteByTenantIdAndId(tenantId, id);
   }
 
+  public Page<Rating> findAllRatingForProduct(Long tenantId, String productId, long lastRecordId, Pageable page) {
+    return repository.findAllByTenantIdAndProductIdAndIdGreaterThanOrderByCreatedAt(tenantId, productId, lastRecordId, page);
+  }
+
 }

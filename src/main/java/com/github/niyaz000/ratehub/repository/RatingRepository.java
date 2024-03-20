@@ -22,4 +22,7 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
   @Modifying
   @Transactional
   void deleteByTenantIdAndId(Long tenantId, Long id);
+
+  Page<Rating> findAllByTenantIdAndProductIdAndIdGreaterThanOrderByCreatedAt(Long tenantId, String productId, Long id, Pageable page);
+
 }

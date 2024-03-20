@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class UserRatingsResponse {
+public class RatingsGetResponse {
 
   private long totalCount;
 

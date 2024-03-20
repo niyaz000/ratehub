@@ -2,7 +2,7 @@
 <configuration>
     <contextName>${spring.application.name}</contextName>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <springProfile name="dev">
+    <springProfile name="!dev">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <shortenedLoggerNameLength>36</shortenedLoggerNameLength>
@@ -21,7 +21,7 @@
         </appender>
     </springProfile>
 
-    <springProfile name="!dev">
+    <springProfile name="dev">
         <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
     </springProfile>
 

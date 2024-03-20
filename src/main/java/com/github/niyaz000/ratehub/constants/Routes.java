@@ -14,6 +14,8 @@ public final class Routes {
 
   public static final String SINGLE_RATINGS_ENDPOINT = RATINGS_ENDPOINT + "/{id}";
 
+  public static final String PRODUCT_RATINGS_ENDPOINT = BASE_PATH + "products/{id}/ratings";
+
   public static final String ACTUATOR_ENDPOINT = "actuator";
 
 }
