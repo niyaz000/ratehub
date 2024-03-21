@@ -46,21 +46,29 @@ public class RatingController {
     return ratingService.findAllRatingForUser(RequestContext.getTenant(), userId, page, perPage, direction);
   }
 
+  @GetMapping(PRODUCT_RATINGS_ENDPOINT)
+  @PreAuthorize(AppConstants.ALL_ROLES)
+  public RatingsGetResponse findAllRatingForProduct(@NotBlank @Size(min = MIN_UUID_LENGTH, max = MAX_UUID_LENGTH) @PathVariable(ID) String productId,
+                                                    @Min (MIN_PER_PAGE) @Max(MAX_PER_PAGE) @RequestParam(name = "per_page", required = false, defaultValue = "50") int perPage,
+                                                    @Min (1) @Max (MAX_PER_PAGE) @RequestParam(name = "last_record_id", required = false, defaultValue = "0") long lastRecordId) {
+    return ratingService.findAllRatingForProduct(RequestContext.getTenant(), productId, perPage, lastRecordId);
+  }
+
   @DeleteMapping(SINGLE_RATINGS_ENDPOINT)
   @PreAuthorize(AppConstants.SYSTEM_AND_ADMIN)
   public void deleteRatingById(@NotNull @Min(MIN_UUID_LENGTH) @PathVariable(AppConstants.ID) Long id) {
     ratingService.deleteRatingById(RequestContext.getTenant(), id);
   }
 
-  @GetMapping(PRODUCT_RATINGS_ENDPOINT)
+  @GetMapping(PRODUCT_RATINGS_SUMMARY_ENDPOINT)
   @PreAuthorize(AppConstants.SYSTEM_AND_ADMIN)
-  public ProductRatingSummaryResponse getRatingSummary(@NotBlank @Size(min = MIN_UUID_LENGTH, max = MAX_UUID_LENGTH) @PathVariable(PRODUCT_ID) String productId) {
+  public ProductRatingSummaryResponse getRatingSummary(@NotBlank @Size(min = MIN_UUID_LENGTH, max = MAX_UUID_LENGTH) @PathVariable(ID) String productId) {
     return ratingService.getRatingSummary(RequestContext.getTenant(), productId);
   }
 
   @PutMapping(PRODUCT_RATINGS_ENDPOINT)
   @PreAuthorize(AppConstants.ALL_ROLES)
-  public RatingGetResponse addOrUpdateRating(@NotBlank @Size(min = MIN_UUID_LENGTH, max = MAX_UUID_LENGTH) @PathVariable(PRODUCT_ID) String productId,
+  public RatingGetResponse addOrUpdateRating(@NotBlank @Size(min = MIN_UUID_LENGTH, max = MAX_UUID_LENGTH) @PathVariable(ID) String productId,
                                                 @Valid @RequestBody RatingCreateRequest request) {
     return ratingService.addOrUpdateRating(RequestContext.getTenant(), request, productId, AuthContext.getUserId());
   }

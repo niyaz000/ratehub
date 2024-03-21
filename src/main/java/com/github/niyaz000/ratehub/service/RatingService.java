@@ -8,7 +8,6 @@ import com.github.niyaz000.ratehub.model.RatingSummary;
 import com.github.niyaz000.ratehub.model.Tenant;
 import com.github.niyaz000.ratehub.request.RatingCreateRequest;
 import com.github.niyaz000.ratehub.response.ProductRatingSummaryResponse;
-import com.github.niyaz000.ratehub.response.RatingCreateResponse;
 import com.github.niyaz000.ratehub.response.RatingGetResponse;
 import com.github.niyaz000.ratehub.response.RatingsGetResponse;
 import com.github.niyaz000.ratehub.util.ExceptionUtil;
@@ -67,7 +66,10 @@ public class RatingService {
     ratingDao.deleteByTenantIdAndId(tenant.getId(), id);
   }
 
-  public RatingsGetResponse findAllRatingForProduct(Tenant tenant, String productId, int perPage, long lastRecordId) {
+  public RatingsGetResponse findAllRatingForProduct(Tenant tenant,
+                                                    String productId,
+                                                    int perPage,
+                                                    long lastRecordId) {
     var ratings = ratingDao.findAllRatingForProduct(tenant.getId(), productId, lastRecordId, PageRequest.of(0, perPage, Sort.Direction.DESC));
     return ratingMapper.mapGetRatingsRequestToResponse(ratings, tenant.getName());
   }
