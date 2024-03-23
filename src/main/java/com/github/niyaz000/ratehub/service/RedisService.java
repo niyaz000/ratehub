@@ -71,8 +71,10 @@ public class RedisService {
   }
 
   public List<Object> enqueueEvent(String key, String body) {
+    var score = Instant.now().getNano();
+    log.info("publishing event with key {} body {} score {}", key, body, score);
     try(var txn = redisClient.getTransaction()) {
-      txn.zadd(PRODUCT_RATINGS_CHANGED_SET_KEY, Instant.now().getNano(), key, new ZAddParams().nx());
+      txn.zadd(PRODUCT_RATINGS_CHANGED_SET_KEY, score, key, new ZAddParams().nx());
       txn.append(key, body);
       return txn.exec();
     }

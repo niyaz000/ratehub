@@ -98,7 +98,6 @@ public class RatingService {
       });
 
     Rating rating = createOrUpdateRating(tenant, request, productId, userId);
-    publisherService.publishEvent(tenant.getName(), rating);
     return ratingMapper.mapRatingGetRequestToResponse(rating, tenant.getName());
   }
 
@@ -114,6 +113,7 @@ public class RatingService {
     } else {
       rating = ratingMapper.mapRatingUpdateRequestToRating(request, record.get());
     }
+    publisherService.publishEvent(tenant.getName(), rating);
     rating = ratingDao.save(rating);
     return rating;
   }
