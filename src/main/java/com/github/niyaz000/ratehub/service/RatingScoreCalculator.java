@@ -1,9 +1,10 @@
 package com.github.niyaz000.ratehub.service;
 
 import com.github.niyaz000.ratehub.dto.RatingChangeDto;
+import com.github.niyaz000.ratehub.dto.ScoreComputeResult;
 
 public interface RatingScoreCalculator {
 
-  int computeScore(RatingChangeDto changeDto);
+  ScoreComputeResult computeScore(RatingChangeDto changeDto);
 
 }

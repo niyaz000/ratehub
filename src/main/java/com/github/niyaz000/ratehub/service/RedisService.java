@@ -8,10 +8,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import redis.clients.jedis.params.ZAddParams;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -57,7 +58,7 @@ public class RedisService {
   }
 
   private List<String> getFirst10ChangedProductRatings(String key) {
-    return redisClient.zrange(key, 0, 10);
+    return redisClient.zRange(key, 0, 10);
   }
 
 
@@ -67,6 +68,14 @@ public class RedisService {
 
   private void releaseLock() {
     redisClient.deleteKey(MUTEX_KEY);
+  }
+
+  public List<Object> enqueueEvent(String key, String body) {
+    try(var txn = redisClient.getTransaction()) {
+      txn.zadd(PRODUCT_RATINGS_CHANGED_SET_KEY, Instant.now().getNano(), key, new ZAddParams().nx());
+      txn.append(key, body);
+      return txn.exec();
+    }
   }
 
 }

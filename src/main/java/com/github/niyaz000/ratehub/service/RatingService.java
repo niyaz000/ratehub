@@ -4,6 +4,7 @@ import com.github.niyaz000.ratehub.dao.RatingDao;
 import com.github.niyaz000.ratehub.dao.RatingSummaryDao;
 import com.github.niyaz000.ratehub.exception.NotFoundException;
 import com.github.niyaz000.ratehub.mapper.RatingMapper;
+import com.github.niyaz000.ratehub.model.Rating;
 import com.github.niyaz000.ratehub.model.RatingSummary;
 import com.github.niyaz000.ratehub.model.Tenant;
 import com.github.niyaz000.ratehub.request.RatingCreateRequest;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.github.niyaz000.ratehub.constants.AppConstants.ID;
 
@@ -33,6 +35,8 @@ public class RatingService {
   private final RatingMapper ratingMapper;
 
   private final RatingSummaryDao ratingSummaryDao;
+
+  private final RatingPublisherService publisherService;
 
   public RatingGetResponse findById(Tenant tenant,
                                     String userId,
@@ -93,9 +97,25 @@ public class RatingService {
         }
       });
 
-    var rating = ratingMapper.mapRatingCreateRequestToRating(request, tenant.getId(), productId, userId);
-    rating = ratingDao.save(rating);
+    Rating rating = createOrUpdateRating(tenant, request, productId, userId);
+    publisherService.publishEvent(tenant.getName(), rating);
     return ratingMapper.mapRatingGetRequestToResponse(rating, tenant.getName());
+  }
+
+  /* Handle concurrency */
+  private Rating createOrUpdateRating(Tenant tenant,
+                                      RatingCreateRequest request,
+                                      String productId,
+                                      String userId) {
+    Optional<Rating> record = ratingDao.findByTenantIdAndUserIdAndProductId(tenant.getId(), userId, productId);
+    Rating rating;
+    if (record.isEmpty()) {
+      rating = ratingMapper.mapRatingCreateRequestToRating(request, tenant.getId(), productId, userId);
+    } else {
+      rating = ratingMapper.mapRatingUpdateRequestToRating(request, record.get());
+    }
+    rating = ratingDao.save(rating);
+    return rating;
   }
 
 }

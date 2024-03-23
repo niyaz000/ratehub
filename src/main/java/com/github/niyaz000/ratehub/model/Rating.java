@@ -13,6 +13,7 @@ import org.hibernate.annotations.Type;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Entity
 @Table(name = "ratings")
@@ -31,6 +32,10 @@ public class Rating extends BaseEntity {
   @Column(name = "product_id", nullable = false)
   @NotBlank
   private String productId;
+
+  @Column(name = "txn_id", nullable = false)
+  @NotBlank
+  private UUID txnId;
 
   @Column(name = "user_id", nullable = false)
   @NotBlank

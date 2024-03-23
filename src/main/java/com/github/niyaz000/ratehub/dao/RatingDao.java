@@ -23,6 +23,10 @@ public class RatingDao {
     return repository.findByTenantIdAndId(tenantId, id);
   }
 
+  public Optional<Rating> findByTenantIdAndUserIdAndProductId(long tenantId, String userId, String productId) {
+    return repository.findByTenantIdAndUserIdAndProductId(tenantId, userId, productId);
+  }
+
   public Optional<Rating> findByTenantIdAndIdAndUserId(long tenantId, long id, String userId) {
     return repository.findByTenantIdAndIdAndUserId(tenantId, id, userId);
   }

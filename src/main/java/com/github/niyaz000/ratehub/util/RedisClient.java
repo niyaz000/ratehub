@@ -3,6 +3,7 @@ package com.github.niyaz000.ratehub.util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.Transaction;
 import redis.clients.jedis.params.SetParams;
 
 import java.time.Duration;
@@ -28,9 +29,21 @@ public class RedisClient {
     }
   }
 
-  public List<String> zrange(String key, int start, int stop) {
+  public List<String> zRange(String key, int start, int stop) {
     try (var jedis = jedisPool.getResource()) {
       return jedis.zrange(key, start, stop);
+    }
+  }
+
+  public long zRem(String key, String member) {
+    try (var jedis = jedisPool.getResource()) {
+      return jedis.zrem(key, member);
+    }
+  }
+
+  public Transaction getTransaction() {
+    try (var jedis = jedisPool.getResource()) {
+      return jedis.multi();
     }
   }
 }

@@ -1,29 +1,33 @@
 package com.github.niyaz000.ratehub.dto;
 
 import com.github.niyaz000.ratehub.model.Rating;
-import lombok.Builder;
-import lombok.Data;
 
-import java.util.Objects;
+import java.util.Optional;
 
-@Data
-@Builder
 public class RatingChangeDto {
 
-  private Rating oldValue;
+  public RatingChangeDto(Rating oldValue, Rating newValue) {
+    this.oldValue = Optional.ofNullable(oldValue);
+    this.newValue = Optional.ofNullable(newValue);
+  }
 
-  private Rating newValue;
+  private final Optional<Rating> oldValue;
+
+  private final Optional<Rating> newValue;
 
   public boolean isCreated() {
-    return Objects.isNull(oldValue) && !Objects.isNull(newValue);
+    return oldValue.isEmpty() && newValue.isPresent();
   }
 
   public boolean isModified() {
-    return !Objects.isNull(oldValue) && !Objects.isNull(newValue);
+    return oldValue.isPresent() && newValue.isPresent();
   }
 
   public boolean isRemoved() {
-    return !Objects.isNull(oldValue) && Objects.isNull(newValue);
+    return oldValue.isPresent() && newValue.isEmpty();
   }
 
+  public Rating getNewValue() {
+    return newValue.get();
+  }
 }

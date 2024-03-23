@@ -64,4 +64,31 @@ public class RatingSummary extends BaseEntity {
       .build();
   }
 
+  public void incrementTotalWeightSum(double incrementBy) {
+    totalWeightedSum += incrementBy;
+  }
+
+  public void incrementTotalWeight(double incrementBy) {
+    totalWeight += incrementBy;
+  }
+
+  public void incrementTotalCount(double score) {
+    if (Math.floor(score) == 1.0) {
+      ++oneStarCount;
+    }
+    if (Math.floor(score) == 2.0) {
+      ++twoStarCount;
+    }
+    if (Math.floor(score) == 3.0) {
+      ++threeStarCount;
+    }
+    if (Math.floor(score) == 4.0) {
+      ++fourStarCount;
+    }
+    if (Math.floor(score) == 5.0) {
+      ++fiveStarCount;
+    }
+    totalCount += 1;
+  }
+
 }

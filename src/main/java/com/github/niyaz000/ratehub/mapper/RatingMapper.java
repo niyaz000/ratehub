@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Mapper
 public interface RatingMapper {
@@ -38,7 +39,19 @@ public interface RatingMapper {
   @Mapping(target = "tenantId", source = "tenantId")
   @Mapping(target = "userId", source = "userId")
   @Mapping(target = "productId", source = "productId")
+  @Mapping(target = "txnId", expression = "java(java.util.UUID.randomUUID())")
   Rating mapRatingCreateRequestToRating(RatingCreateRequest request, Long tenantId, String productId, String userId);
+
+  default Rating mapRatingUpdateRequestToRating(RatingCreateRequest request, Rating rating) {
+    rating.setScore(request.getScore());
+    rating.setVariation(request.getVariation());
+    rating.setRegion(request.getRegion());
+    rating.setWeight(request.getWeight());
+    rating.setVerified(request.isVerified());
+    rating.setMeta(request.getMeta());
+    rating.setTxnId(UUID.randomUUID());
+    return rating;
+  }
 
   default RatingsGetResponse mapGetRatingsRequestToResponse(Page<Rating> ratings, String tenantName) {
     var response = new RatingsGetResponse();

@@ -25,4 +25,6 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
 
   Page<Rating> findAllByTenantIdAndProductIdAndIdGreaterThanOrderByCreatedAt(Long tenantId, String productId, Long id, Pageable page);
 
+  Optional<Rating> findByTenantIdAndUserIdAndProductId(long tenantId, String userId, String productId);
+
 }
