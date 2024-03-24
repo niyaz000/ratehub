@@ -41,10 +41,11 @@ public class RedisService {
         log.info("unable to acquire lock, skipping scheduling");
         return;
       }
-      var changedRatings = getFirst10ChangedProductRatings(PRODUCT_RATINGS_CHANGED_SET_KEY);
-      scheduleJobsToRecomputeRatings(changedRatings);
+      var product = getProduct();
+      scheduleJobsToRecomputeRatings(product);
     } finally {
       if (acquiredLock) {
+        log.info("releasing acquired lock");
         releaseLock();
       }
     }
@@ -57,10 +58,9 @@ public class RedisService {
       .forEach(overallScoreComputeService::computeNewScore);
   }
 
-  private List<String> getFirst10ChangedProductRatings(String key) {
-    return redisClient.zRange(key, 0, 10);
+  private List<String> getProduct() {
+    return redisClient.zRangeByScore(PRODUCT_RATINGS_CHANGED_SET_KEY, Double.NEGATIVE_INFINITY, Instant.now().minus(Duration.ofSeconds(10)).getNano());
   }
-
 
   private boolean acquireLock() {
     return redisClient.setNex(MUTEX_KEY, "0", MUTEX_TTL);

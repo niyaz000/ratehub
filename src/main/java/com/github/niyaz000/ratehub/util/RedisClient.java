@@ -29,9 +29,9 @@ public class RedisClient {
     }
   }
 
-  public List<String> zRange(String key, int start, int stop) {
+  public List<String> zRangeByScore(String key, double start, double stop) {
     try (var jedis = jedisPool.getResource()) {
-      return jedis.zrange(key, start, stop);
+      return jedis.zrangeByScore(key, start, stop);
     }
   }
 

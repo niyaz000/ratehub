@@ -17,19 +17,17 @@ public class SimpleAverageScoreRatingService implements RatingScoreCalculator {
   @Override
   public ScoreComputeResult computeScore(RatingChangeDto changeDto) {
     log.info("processing overall rating score computation for product {}, value {}",
-      changeDto.getNewValue().getProductId(),
+      changeDto.getTenantId(),
       changeDto);
 
-    if (changeDto.isCreated()) {
       return handleNewRatingAddition(changeDto);
-    }
-
-    return ScoreComputeResult
-      .builder()
-      .totalWeightedSum(0)
-      .totalWeight(0)
-      .score(0)
-      .build();
+//
+//    return ScoreComputeResult
+//      .builder()
+//      .totalWeightedSum(0)
+//      .totalWeight(0)
+//      .score(0)
+//      .build();
   }
 
   private ScoreComputeResult handleNewRatingAddition(RatingChangeDto changeDto) {

@@ -93,6 +93,7 @@ public class RatingService {
         try {
           return ratingSummaryDao.save(RatingSummary.defaultRatingSummary(tenant.getId(), productId));
         } catch (DataIntegrityViolationException ex) {
+          log.info("encountered exception while saving rating summary for product {}, fetching current record from database", productId);
           return ratingSummaryDao.findByTenantIdAndProductId(tenant.getId(), productId).get();
         }
       });
