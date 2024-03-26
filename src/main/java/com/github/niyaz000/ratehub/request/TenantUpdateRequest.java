@@ -10,6 +10,6 @@ import java.util.Map;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Data
 public class TenantUpdateRequest {
-  private Map<String, Object> meta = new HashMap<>();
+  private Map<String, Object> config = new HashMap<>();
 
 }

@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static io.opentelemetry.javaagent.shaded.io.opentelemetry.api.internal.ConfigUtil.defaultIfNull;
 
@@ -51,7 +52,7 @@ public class Tenant extends BaseEntity {
 
   public Map<String, String> getSigningKeyConfig() {
     var value = (Map<String, String>) defaultIfNull(config.get(JWT_CONFIG_KEY), new HashMap<>());
-    return value;
+    return Objects.requireNonNull(value);
   }
 
 }

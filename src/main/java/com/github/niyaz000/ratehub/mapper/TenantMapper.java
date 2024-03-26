@@ -26,7 +26,7 @@ public interface TenantMapper {
   Tenant mapTenantCreateRequestToTenant(TenantCreateRequest request);
 
   default Tenant mapTenantUpdateRequestToTenant(TenantUpdateRequest request, Tenant tenant) {
-    tenant.setConfig(request.getMeta());
+    tenant.setConfig(request.getConfig());
     return tenant;
   }
 

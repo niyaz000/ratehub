@@ -7,6 +7,7 @@ import com.github.niyaz000.ratehub.request.TenantUpdateRequest;
 import com.github.niyaz000.ratehub.response.TenantCreateResponse;
 import com.github.niyaz000.ratehub.response.TenantListResponse;
 import com.github.niyaz000.ratehub.util.ExceptionUtil;
+import com.github.niyaz000.ratehub.validator.TenantValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,6 +25,8 @@ public class TenantService {
 
   private final TenantMapper tenantMapper;
 
+  private final TenantValidator validator;
+
   public TenantCreateResponse findByName(String name) {
     log.info("looking up tenant with name '{}'", name);
     var tenant = tenantDao.findByName(name);
@@ -32,6 +35,7 @@ public class TenantService {
 
   public TenantCreateResponse create(TenantCreateRequest request) {
     log.info("creating tenant for request {}", request);
+    validator.validate(request);
     raiseExceptionIfTenantAlreadyExists(request);
     try {
       return createTenant(request);

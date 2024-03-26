@@ -40,4 +40,8 @@ public final class ExceptionUtil {
     return new UnauthorizedException();
   }
 
+  public static ValidationFailedException validationFailedException(String field, String code, String message) {
+    return new ValidationFailedException(field, code, message);
+  }
+
 }
